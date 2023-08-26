@@ -3,6 +3,8 @@ import words from './wordList.json'
 import {Keyboard} from './Keyboard'
 import {HangmanDrawing} from './HangmanDrawing'
 import {HangmanWord} from './HangmanWord'
+import Confetti from 'react-confetti';
+
 
 function getWord() {
   return words[Math.floor(Math.random() * words.length)]
@@ -11,6 +13,8 @@ function getWord() {
 function App() {
   const [wordToGuess, setWordToGuess] = useState(getWord)
   const [guessedLetters, setGuessedLetters] = useState<string[]>([])
+
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const incorrectLetters = guessedLetters.filter(
     letter => !wordToGuess.includes(letter)
@@ -63,6 +67,19 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    if (isWinner) {
+      startConfetti(); // Trigger confetti animation when the player wins
+    }
+  }, [isWinner]);
+
+  const startConfetti = () => {
+    setShowConfetti(true);
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000); // Duration for which the confetti will be visible
+  };
+
   return (
     <div
       style={{
@@ -94,6 +111,9 @@ function App() {
           addGuessedLetter={addGuessedLetter}
         />
       </div>
+      {showConfetti && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      )}
     </div>
   )
 }
